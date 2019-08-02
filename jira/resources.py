@@ -274,6 +274,8 @@ class Resource(object):
         data.update(kwargs)
 
         data = json.dumps(data)
+        url = self._resource.format(self.id)
+        url = self._options['server'] + '/rest/api/2/' + url
 
         if not notify:
             querystring = "?notifyUsers=false"
@@ -281,7 +283,7 @@ class Resource(object):
             querystring = ""
 
         r = self._session.put(
-            self.self + querystring, data=data)
+            url + querystring, data=data)
         if 'autofix' in self._options and \
                 r.status_code == 400:
             user = None
@@ -344,7 +346,7 @@ class Resource(object):
                     self.self, data=json.dumps(data))
 
         time.sleep(self._options['delay_reload'])
-        self._load(self.self)
+        self._load(url)
 
     def delete(self, params=None):
         """Delete this resource from the server, passing the specified query parameters.
